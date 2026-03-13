@@ -183,7 +183,7 @@ The following evidence demonstrates the detection and investigation process:
 
 ### Wazuh Alert Showing Failed Login Attempts
 
-![Wazuh Alert](Brute_Force_evidence/wazuh_alert.png)
+![Wazuh Alert](Cybersecurity-Labs/wazuh-bruteforce-detection-lab/images/wazuh_alert.png)
 ![Wazuh Alert](Brute_Force_evidence/wazuh_alert_details.png)
 
 These alerts show multiple failed login attempts detected by Wazuh from the attacker machine.
