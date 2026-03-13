@@ -192,7 +192,7 @@ These alerts show multiple failed login attempts detected by Wazuh from the atta
 
 ### Windows Event Viewer Showing Event ID 4625
 
-![Windows Event Logs](Brute_Force_evidence/Windows_Event_logs.png)
+![Windows Event Logs](images/Windows_Event_logs.png)
 ![Windows Event Logs](Brute_Force_evidence/Windows_Event_logs_2.png)
 
 These logs confirm authentication failures generated during the brute force attack.
