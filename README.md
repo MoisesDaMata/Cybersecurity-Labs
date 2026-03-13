@@ -35,13 +35,6 @@ cybersecurity-labs/
 - [ ] Lateral Movement Monitoring (T1021)
 - [ ] Ransomware Behavior Detection
 
-### How to Contribute
-
-1. Fork this repository
-2. Create a branch: `git checkout -b lab/new-lab-name`
-3. Add your lab following the existing folder structure
-4. Open a Pull Request with a description of the lab
-
 ---
 
 ## 🇧🇷 Português
@@ -78,13 +71,6 @@ cybersecurity-labs/
 - [ ] Detecção de Escalada de Privilégios (T1068)
 - [ ] Monitoramento de Movimento Lateral (T1021)
 - [ ] Detecção de Comportamento de Ransomware
-
-### Como Contribuir
-
-1. Faça um fork deste repositório
-2. Crie uma branch: `git checkout -b lab/nome-do-novo-lab`
-3. Adicione seu lab seguindo a estrutura de pastas existente
-4. Abra um Pull Request com a descrição do lab
 
 ---
 
