@@ -184,7 +184,7 @@ The following evidence demonstrates the detection and investigation process:
 ### Wazuh Alert Showing Failed Login Attempts
 
 ![Wazuh Alert](Images/wazuh_alert.png)
-![Wazuh Alert](Cybersecurity-Labs/wazuh-bruteforce-detection-lab/Images/wazuh_alert_details.png)
+![Wazuh Alert](Images/wazuh_alert_details.png)
 
 These alerts show multiple failed login attempts detected by Wazuh from the attacker machine.
 
@@ -192,8 +192,8 @@ These alerts show multiple failed login attempts detected by Wazuh from the atta
 
 ### Windows Event Viewer Showing Event ID 4625
 
-![Windows Event Logs](images/Windows_Event_logs.png)
-![Windows Event Logs](Brute_Force_evidence/Windows_Event_logs_2.png)
+![Windows Event Logs](Images/Windows_Event_logs.png)
+![Windows Event Logs](Images/Windows_Event_logs_2.png)
 
 These logs confirm authentication failures generated during the brute force attack.
 
