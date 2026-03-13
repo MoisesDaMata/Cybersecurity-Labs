@@ -1,22 +1,94 @@
 # Cybersecurity Labs - Moises Franco
 
 ## 🇺🇸 English
+
 Hands-on cybersecurity labs focused on threat detection with Wazuh and PowerShell.
 
+### Prerequisites
+
+- Wazuh v4.x (Manager + Agent configured)
+- Windows 10/11 or Windows Server 2019/2022 (for agent)
+- PowerShell 5.1+
+- Python 3.8+ (optional, for auxiliary scripts)
+
 ### Available Labs
-- [Wazuh Bruteforce Detection](wazuh-bruteforce-detection-lab/) - Brute force attack detection rules.
-- [Suspicious PowerShell Detection](Detecting-Suspicious-PowerShell-Execution-Encoded-Command/) - Encoded command monitoring.
-- [Pass-the-Hash Detection](Detecting-Pass-the-Hash-Attack-MITRE-T1550.002/) - MITRE ATT&CK T1550.002 implementation.
 
-## 🇧🇷 Português
-Labs práticos de cibersegurança com detecção de ameaças via Wazuh e PowerShell.
+| Lab | Description | Status |
+|-----|-------------|--------|
+| [bruteforce-detection](./bruteforce-detection/) | Brute force attack detection rules | ✅ Completed |
+| [suspicious-powershell](./suspicious-powershell/) | Encoded command monitoring | ✅ Completed |
+| [pass-the-hash](./pass-the-hash/) | MITRE ATT&CK T1550.002 implementation | ✅ Completed |
 
-### Labs Disponíveis
-- [Wazuh Detecção Bruteforce](wazuh-bruteforce-detection-lab/) - Regras contra ataques de força bruta.
-- [PowerShell Suspeito](Detecting-Suspicious-PowerShell-Execution-Encoded-Command/) - Detecção de comandos codificados.
-- [Pass-the-Hash](Detecting-Pass-the-Hash-Attack-MITRE-T1550.002/) - Detecção MITRE T1550.002.
+### Repository Structure
+
+```
+cybersecurity-labs/
+├── bruteforce-detection/
+├── suspicious-powershell/
+├── pass-the-hash/
+└── README.md
+```
+
+### Roadmap
+
+- [ ] Privilege Escalation Detection (T1068)
+- [ ] Lateral Movement Monitoring (T1021)
+- [ ] Ransomware Behavior Detection
+
+### How to Contribute
+
+1. Fork this repository
+2. Create a branch: `git checkout -b lab/new-lab-name`
+3. Add your lab following the existing folder structure
+4. Open a Pull Request with a description of the lab
 
 ---
-[![Wazuh](https://img.shields.io/badge/Wazuh-v4.x-blue?logo=wazuh)](wazuh-bruteforce-detection-lab/)
-[![MITRE](https://img.shields.io/badge/MITRE-ATT%26CK-red?logo=mitre)](Detecting-Pass-the-Hash-Attack-MITRE-T1550.002)
-[![GitHub](https://img.shields.io/badge/GitHub-Labs-black?logo=github)](https://github.com/seuusuario/Cybersecurity-Labs)
+
+## 🇧🇷 Português
+
+Labs práticos de cibersegurança com detecção de ameaças via Wazuh e PowerShell.
+
+### Pré-requisitos
+
+- Wazuh v4.x (Manager + Agent configurados)
+- Windows 10/11 ou Windows Server 2019/2022 (para o agente)
+- PowerShell 5.1+
+- Python 3.8+ (opcional, para scripts auxiliares)
+
+### Labs Disponíveis
+
+| Lab | Descrição | Status |
+|-----|-----------|--------|
+| [bruteforce-detection](./bruteforce-detection/) | Regras contra ataques de força bruta | ✅ Concluído |
+| [suspicious-powershell](./suspicious-powershell/) | Detecção de comandos codificados | ✅ Concluído |
+| [pass-the-hash](./pass-the-hash/) | Detecção MITRE T1550.002 | ✅ Concluído |
+
+### Estrutura do Repositório
+
+```
+cybersecurity-labs/
+├── bruteforce-detection/
+├── suspicious-powershell/
+├── pass-the-hash/
+└── README.md
+```
+
+### Roadmap
+
+- [ ] Detecção de Escalada de Privilégios (T1068)
+- [ ] Monitoramento de Movimento Lateral (T1021)
+- [ ] Detecção de Comportamento de Ransomware
+
+### Como Contribuir
+
+1. Faça um fork deste repositório
+2. Crie uma branch: `git checkout -b lab/nome-do-novo-lab`
+3. Adicione seu lab seguindo a estrutura de pastas existente
+4. Abra um Pull Request com a descrição do lab
+
+---
+
+![Wazuh v4.x](https://img.shields.io/badge/Wazuh-v4.x-blue)
+![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK-red)
+![GitHub Labs](https://img.shields.io/badge/GitHub-Labs-black?logo=github)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
