@@ -127,3 +127,10 @@ lab-03-network-enumeration-T1049/
 - [MITRE ATT&CK T1049 — System Network Connections Discovery](https://attack.mitre.org/techniques/T1049/)
 - [Windows Event ID 4688 — Process Creation](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4688)
 - [Wazuh Documentation](https://documentation.wazuh.com)
+
+---
+
+## Connect
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=flat-square&logo=linkedin&logoColor=white&link=https://www.linkedin.com/in/moisesfpm/)](https://www.linkedin.com/in/moisesfpm/)
+
+*Developed by Moises da Mata*
