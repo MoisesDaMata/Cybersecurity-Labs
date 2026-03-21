@@ -1,80 +1,89 @@
-# Cybersecurity Labs - Moises Franco
+# Cybersecurity Labs — Moises da Mata
 
-## 🇺🇸 English
+![Wazuh](https://img.shields.io/badge/Wazuh-v4.x-blue?style=flat-square&logo=wazuh&logoColor=white)
+![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK-red?style=flat-square)
+![Windows](https://img.shields.io/badge/Platform-Windows_10-0078D6?style=flat-square&logo=windows&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=flat-square)
 
-Hands-on cybersecurity labs focused on threat detection with Wazuh and PowerShell.
+---
 
-### Prerequisites
+## Overview
+
+Hands-on cybersecurity labs simulating a full attack kill chain and detecting each technique using **Wazuh SIEM** on a Windows 10 endpoint.
+
+Each lab covers a real-world attacker technique mapped to **MITRE ATT&CK**, documented with attack simulation steps, Wazuh detection evidence, and key IOCs for SOC analysts.
+
+---
+
+## Lab Environment
+
+| Machine | Role | OS |
+|---|---|---|
+| Kali Linux | Attacker | Kali Linux |
+| Windows 10 | Target + Wazuh Agent | Windows 10 |
+| Wazuh Server | SIEM | Ubuntu Server |
+
+---
+
+## Labs
+
+| # | Lab | Tactic | Technique | Detection |
+|---|---|---|---|---|
+| 01 | [Brute Force Detection](./lab-01-bruteforce-T1110/) | Credential Access | T1110 | Event ID 4625 |
+| 02 | [Encoded PowerShell](./lab-02-encoded-powershell-T1059/) | Execution | T1059.001 | Event ID 4688 |
+| 03 | [Network Enumeration](./lab-03-network-enumeration-T1049/) | Discovery | T1049 | Event ID 4688 |
+| 04 | [Pass-the-Hash](./lab-04-pass-the-hash-T1550/) | Lateral Movement | T1550.002 | Event ID 4624 |
+| 05 | [Privilege Escalation](./lab-05-privilege-escalation-T1078/) | Privilege Escalation | T1078.003 | Event IDs 4720, 4732 |
+| 06 | [PowerShell Download Cradle](./lab-06-download-cradle-T1105/) | Command & Control | T1105 | Event ID 4688 |
+| 07 | [Scheduled Task Creation](./lab-07-scheduled-task-T1053/) | Persistence | T1053 | Event ID 4688 |
+| 08 | [Disable Windows Defender](./lab-08-disable-defender-T1562/) | Defense Evasion | T1562.001 | Event ID 4688 |
+
+---
+
+## Repository Structure
+
+```
+Cybersecurity-Labs/
+├── README.md
+├── lab-01-bruteforce-T1110/
+│   ├── README.md
+│   └── Images/
+├── lab-02-encoded-powershell-T1059/
+│   ├── README.md
+│   └── images/
+├── lab-03-network-enumeration-T1049/
+│   ├── README.md
+│   └── images/
+├── lab-04-pass-the-hash-T1550/
+│   ├── README.md
+│   └── images/
+├── lab-05-privilege-escalation-T1078/
+│   ├── README.md
+│   └── images/
+├── lab-06-download-cradle-T1105/
+│   ├── README.md
+│   └── images/
+├── lab-07-scheduled-task-T1053/
+│   ├── README.md
+│   └── images/
+└── lab-08-disable-defender-T1562/
+    ├── README.md
+    └── images/
+```
+
+---
+
+## Prerequisites
 
 - Wazuh v4.x (Manager + Agent configured)
-- Windows 10/11 or Windows Server 2019/2022 (for agent)
-- PowerShell 5.1+
-- Python 3.8+ (optional, for auxiliary scripts)
-
-### Available Labs
-
-| Lab | Description | Status |
-|-----|-------------|--------|
-| [bruteforce-detection](./bruteforce-detection/) | Brute force attack detection rules | ✅ Completed |
-| [suspicious-powershell](./suspicious-powershell/) | Encoded command monitoring | ✅ Completed |
-| [pass-the-hash](./pass-the-hash/) | MITRE ATT&CK T1550.002 implementation | ✅ Completed |
-
-### Repository Structure
-
-```
-cybersecurity-labs/
-├── bruteforce-detection/
-├── suspicious-powershell/
-├── pass-the-hash/
-└── README.md
-```
-
-### Roadmap
-
-- [ ] Privilege Escalation Detection (T1068)
-- [ ] Lateral Movement Monitoring (T1021)
-- [ ] Ransomware Behavior Detection
+- Windows 10 with Wazuh Agent installed
+- Kali Linux (attacker machine)
+- Process Creation auditing enabled (Event ID 4688 + Command Line logging)
 
 ---
 
-## 🇧🇷 Português
+## Connect
 
-Labs práticos de cibersegurança com detecção de ameaças via Wazuh e PowerShell.
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/moisesdamata/)
 
-### Pré-requisitos
-
-- Wazuh v4.x (Manager + Agent configurados)
-- Windows 10/11 ou Windows Server 2019/2022 (para o agente)
-- PowerShell 5.1+
-- Python 3.8+ (opcional, para scripts auxiliares)
-
-### Labs Disponíveis
-
-| Lab | Descrição | Status |
-|-----|-----------|--------|
-| [bruteforce-detection](./bruteforce-detection/) | Regras contra ataques de força bruta | ✅ Concluído |
-| [suspicious-powershell](./suspicious-powershell/) | Detecção de comandos codificados | ✅ Concluído |
-| [pass-the-hash](./pass-the-hash/) | Detecção MITRE T1550.002 | ✅ Concluído |
-
-### Estrutura do Repositório
-
-```
-cybersecurity-labs/
-├── bruteforce-detection/
-├── suspicious-powershell/
-├── pass-the-hash/
-└── README.md
-```
-
-### Roadmap
-
-- [ ] Detecção de Escalada de Privilégios (T1068)
-- [ ] Monitoramento de Movimento Lateral (T1021)
-- [ ] Detecção de Comportamento de Ransomware
-
----
-
-![Wazuh v4.x](https://img.shields.io/badge/Wazuh-v4.x-blue)
-![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK-red)
-![GitHub Labs](https://img.shields.io/badge/GitHub-Labs-black?logo=github)
-![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+*Developed by Moises da Mata*
