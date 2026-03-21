@@ -7,15 +7,15 @@
 
 ---
 
-## Objetivo
+## Objective
 
-Simular comandos de enumeração de rede executados por um atacante após comprometer uma máquina Windows, e detectar o comportamento através do Wazuh SIEM monitorando o Event ID 4688.
+Simulate network enumeration commands executed by an attacker after compromising a Windows machine, and detect the behavior through Wazuh SIEM by monitoring Event ID 4688.
 
 ---
 
-## Ambiente do Lab
+## Lab Environment
 
-| Máquina | Role | IP |
+| Machine | Role | IP |
 |---|---|---|
 | Kali Linux | Attacker | 192.168.56.104 |
 | Windows 10 | Target | 192.168.56.103 |
@@ -23,19 +23,19 @@ Simular comandos de enumeração de rede executados por um atacante após compro
 
 ---
 
-## Explicação Técnica
+## Technical Background
 
-Após comprometer um sistema, atacantes executam comandos de reconhecimento para mapear a rede local — identificando hosts ativos, conexões estabelecidas e sessões abertas. Essa fase é crítica para planejar movimentação lateral.
+After compromising a system, attackers run reconnaissance commands to map the local network — identifying active hosts, established connections, and open sessions. This phase is critical for planning lateral movement.
 
-Neste lab, o atacante executa comandos nativos do Windows para coletar informações de rede. O Wazuh captura cada processo via Event ID 4688, registrando o nome do processo e os argumentos da linha de comando.
+In this lab, the attacker executes native Windows commands to collect network information. Wazuh captures each process via Event ID 4688, recording the process name and command-line arguments.
 
 ---
 
-## Passo a Passo do Ataque
+## Attack Walkthrough
 
-### 1. Executar comandos de enumeração no Windows
+### 1. Execute enumeration commands on Windows
 
-No Windows 10, abrir o `cmd.exe` e executar:
+On Windows 10, open `cmd.exe` and run:
 
 ```cmd
 arp -a
@@ -43,35 +43,35 @@ query user
 net session
 ```
 
-**O que cada comando revela:**
+**What each command reveals:**
 
-| Comando | Informação coletada |
+| Command | Information collected |
 |---|---|
-| `arp -a` | Tabela ARP — hosts ativos na rede local |
-| `query user` | Sessões de usuário ativas no sistema |
-| `net session` | Sessões de rede abertas com outros hosts |
+| `arp -a` | ARP table — active hosts on the local network |
+| `query user` | Active user sessions on the system |
+| `net session` | Open network sessions with other hosts |
 
 ---
 
-### 2. Detecção no Wazuh — Event ID 4688
+### 2. Detection in Wazuh — Event ID 4688
 
-No Wazuh Dashboard, os eventos foram capturados com o filtro:
+In the Wazuh Dashboard, the events were captured using the filter:
 
 ```
 data.win.eventdata.commandLine: *arp*
 ```
 
-O Wazuh registrou o processo `arp.exe` sendo iniciado com o argumento `-a`, confirmando a execução do comando de enumeração.
+Wazuh logged the `arp.exe` process being launched with the `-a` argument, confirming the execution of the enumeration command.
 
 ![Wazuh ARP Event](images/16-wazuh-arp-event.png)
 
 ---
 
-### 3. Análise dos campos do evento
+### 3. Event field analysis
 
-Com o evento expandido no Wazuh, os campos confirmam a execução:
+With the event expanded in Wazuh, the fields confirm the execution:
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
 | `eventID` | `4688` |
 | `newProcessName` | `C:\Windows\System32\arp.exe` |
@@ -83,33 +83,33 @@ Com o evento expandido no Wazuh, os campos confirmam a execução:
 
 ---
 
-## Sequência do Ataque
+## Attack Sequence
 
 ![Attack Sequence](images/15-attack-sequence.png)
 
 ---
 
-## Indicadores de Comprometimento (IOCs)
+## Indicators of Compromise (IOCs)
 
-| Indicador | Valor |
+| Indicator | Value |
 |---|---|
-| Processos | `arp.exe`, `query.exe`, `net.exe` |
-| Argumentos | `-a`, `user`, `session` |
-| Processo pai | `cmd.exe` |
+| Processes | `arp.exe`, `query.exe`, `net.exe` |
+| Arguments | `-a`, `user`, `session` |
+| Parent process | `cmd.exe` |
 | Event ID | `4688` |
 
 ---
 
-## O que o SOC deve observar
+## What the SOC Should Look For
 
-- Execução sequencial de múltiplos comandos de reconhecimento em curto intervalo
-- `arp.exe`, `net.exe`, `query.exe` iniciados a partir de `cmd.exe` ou `powershell.exe`
-- Comandos de enumeração executados por contas de usuário padrão
-- Padrão de discovery seguido de tentativas de conexão lateral
+- Sequential execution of multiple reconnaissance commands in a short timeframe
+- `arp.exe`, `net.exe`, `query.exe` launched from `cmd.exe` or `powershell.exe`
+- Enumeration commands executed by standard user accounts
+- Discovery pattern followed by lateral movement connection attempts
 
 ---
 
-## Estrutura de Arquivos
+## File Structure
 
 ```
 lab-03-network-enumeration-T1049/
@@ -122,7 +122,7 @@ lab-03-network-enumeration-T1049/
 
 ---
 
-## Referências
+## References
 
 - [MITRE ATT&CK T1049 — System Network Connections Discovery](https://attack.mitre.org/techniques/T1049/)
 - [Windows Event ID 4688 — Process Creation](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4688)

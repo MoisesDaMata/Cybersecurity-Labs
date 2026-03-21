@@ -7,47 +7,47 @@
 
 ---
 
-## Objetivo
+## Objective
 
-Simular uma escalada de privilégios via conta local válida, técnica usada por atacantes para obter acesso administrativo sem explorar vulnerabilidades, e detectar o comportamento através do Wazuh SIEM monitorando eventos de gerenciamento de contas do Windows.
+Simulate a privilege escalation attack using a valid local account, a technique used by attackers to gain administrative access without exploiting vulnerabilities, and detect the behavior through Wazuh SIEM by monitoring Windows account management events.
 
 ---
 
-## Ambiente do Lab
+## Lab Environment
 
-| Máquina | Role | IP |
+| Machine | Role | IP |
 |---|---|---|
 | Windows 10 | Target | 192.168.56.103 |
 | Wazuh Server | SIEM | — |
 
 ---
 
-## Explicação Técnica
+## Technical Background
 
-Diferente de exploits, essa técnica abusa de funcionalidades legítimas do sistema operacional. O atacante cria uma conta de usuário padrão e em seguida a adiciona ao grupo local de Administradores — obtendo privilégios máximos sem acionar detecções baseadas em exploração.
+Unlike exploit-based attacks, this technique abuses legitimate operating system functionality. The attacker creates a standard user account and immediately adds it to the local Administrators group — gaining maximum privileges without triggering exploit-based detections.
 
-Os dois eventos críticos gerados são:
-- **Event ID 4720** — nova conta de usuário criada
-- **Event ID 4732** — conta adicionada ao grupo local de Administradores
+The two critical events generated are:
+- **Event ID 4720** — new user account created
+- **Event ID 4732** — account added to the local Administrators group
 
-A correlação entre os dois eventos pelo mesmo SID confirma a escalada de privilégios.
+Correlating both events by the same SID confirms the privilege escalation.
 
 ---
 
-## Passo a Passo do Ataque
+## Attack Walkthrough
 
-### 1. Criar a conta e escalar privilégios
+### 1. Create account and escalate privileges
 
-No Windows 10, com `cmd.exe` aberto como Administrador:
+On Windows 10, with `cmd.exe` opened as Administrator:
 
 ```powershell
-# Criar usuário padrão
+# Create standard user
 net user attacker Password123! /add
 
-# Adicionar ao grupo Administradores
+# Add to Administrators group
 net localgroup Administrators attacker /add
 
-# Confirmar membros do grupo
+# Confirm group membership
 net localgroup Administrators
 ```
 
@@ -55,7 +55,7 @@ net localgroup Administrators
 
 ---
 
-### 2. Confirmar adição ao grupo Administradores
+### 2. Confirm addition to Administrators group
 
 ```powershell
 net localgroup Administrators
@@ -65,24 +65,24 @@ net localgroup Administrators
 
 ---
 
-### 3. Detecção no Wazuh — Event IDs 4720 e 4732
+### 3. Detection in Wazuh — Event IDs 4720 and 4732
 
-O Wazuh capturou os dois eventos em sequência:
+Wazuh captured both events in sequence:
 
-**Event ID 4720 — Conta criada:**
+**Event ID 4720 — Account created:**
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
 | `eventID` | `4720` |
 | `newTargetUserName` | `attacker` |
 | `subjectUserName` | `target` |
 
-**Event ID 4732 — Adicionada ao grupo Administradores:**
+**Event ID 4732 — Added to Administrators group:**
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
 | `eventID` | `4732` |
-| `memberSid` | SID correspondente à conta `attacker` |
+| `memberSid` | SID matching the `attacker` account |
 | `targetUserName` | `Administrators` |
 | `subjectUserName` | `target` |
 
@@ -90,46 +90,46 @@ O Wazuh capturou os dois eventos em sequência:
 
 ---
 
-## Correlação por SID
+## SID Correlation Analysis
 
-A chave da detecção é correlacionar o SID entre os dois eventos:
+The key to confirming privilege escalation is correlating the SID across both events:
 
 ```
-Event 4720 — Conta criada
-  Usuário: attacker
-  SID:     S-1-5-21-...-XXXX
+Event 4720 — Account Created
+  User:  attacker
+  SID:   S-1-5-21-...-XXXX
 
-Event 4732 — Adicionada ao grupo Administradores
+Event 4732 — Added to Administrators Group
   Member SID: S-1-5-21-...-XXXX
 
-→ O mesmo SID confirma que a conta recém-criada foi
-  imediatamente escalada para Administradores.
+→ The matching SID confirms that the newly created account
+  was immediately granted administrative privileges.
 ```
 
 ---
 
-## Indicadores de Comprometimento (IOCs)
+## Indicators of Compromise (IOCs)
 
-| Indicador | Valor |
+| Indicator | Value |
 |---|---|
 | Event IDs | `4720`, `4732` |
-| Conta criada | `attacker` |
-| Grupo alvo | `Administrators` |
-| Comando | `net user /add` + `net localgroup Administrators /add` |
+| Account created | `attacker` |
+| Target group | `Administrators` |
+| Commands | `net user /add` + `net localgroup Administrators /add` |
 
 ---
 
-## O que o SOC deve observar
+## What the SOC Should Look For
 
-- Event ID 4720 seguido rapidamente de Event ID 4732 para o mesmo SID
-- Contas adicionadas ao grupo Administradores fora do horário comercial
-- Criação de contas com nomes genéricos ou suspeitos
-- `net.exe` sendo usado para gerenciamento de grupos por usuários não administrativos
-- Event ID 4672 (privilégios especiais) logo após o logon da nova conta
+- Event ID 4720 followed quickly by Event ID 4732 for the same SID
+- Accounts added to the Administrators group outside business hours
+- Account creation with generic or suspicious names
+- `net.exe` used for group management by non-administrative users
+- Event ID 4672 (special privileges) shortly after the new account logs in
 
 ---
 
-## Estrutura de Arquivos
+## File Structure
 
 ```
 lab-05-privilege-escalation-T1078/
@@ -142,7 +142,7 @@ lab-05-privilege-escalation-T1078/
 
 ---
 
-## Referências
+## References
 
 - [MITRE ATT&CK T1078.003 — Valid Accounts: Local Accounts](https://attack.mitre.org/techniques/T1078/003/)
 - [Windows Event ID 4720 — User Account Created](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4720)

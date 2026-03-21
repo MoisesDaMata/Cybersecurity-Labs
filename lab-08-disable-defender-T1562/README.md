@@ -7,69 +7,69 @@
 
 ---
 
-## Objetivo
+## Objective
 
-Simular a desativação do Windows Defender via linha de comando, técnica usada por atacantes para remover a principal camada de proteção do endpoint antes de executar ferramentas ou payloads maliciosos, e detectar o comportamento através do Wazuh SIEM.
+Simulate the disabling of Windows Defender via command line, a technique used by attackers to remove the primary endpoint protection layer before executing malicious tools or payloads, and detect the behavior through Wazuh SIEM.
 
 ---
 
-## Ambiente do Lab
+## Lab Environment
 
-| Máquina | Role | IP |
+| Machine | Role | IP |
 |---|---|---|
 | Windows 10 | Target | 192.168.56.103 |
 | Wazuh Server | SIEM | — |
 
 ---
 
-## Explicação Técnica
+## Technical Background
 
-Antes de executar ferramentas ofensivas em um sistema comprometido, atacantes frequentemente desativam ou modificam soluções de segurança para evitar detecção. A desativação do Windows Defender via `Set-MpPreference` é uma das técnicas mais documentadas e utilizadas por malwares, ransomware e grupos APT.
+Before executing offensive tools on a compromised system, attackers frequently disable or modify security solutions to avoid detection. Disabling Windows Defender via `Set-MpPreference` is one of the most documented and widely used techniques by malware, ransomware, and APT groups.
 
-Neste lab, o atacante:
-1. Abre o `cmd.exe` com privilégios de Administrador
-2. Chama o `powershell.exe` explicitamente como processo filho, passando o comando de desativação via `-Command`
-3. O Wazuh captura o Event ID 4688 com o `commandLine` completo, expondo a tentativa de evasão
+In this lab, the attacker:
+1. Opens `cmd.exe` with Administrator privileges
+2. Explicitly calls `powershell.exe` as a child process, passing the disable command via `-Command`
+3. Wazuh captures Event ID 4688 with the full `commandLine`, exposing the evasion attempt
 
-A escolha de invocar o PowerShell a partir do `cmd.exe` é intencional — garante a criação de um novo processo filho, gerando o evento 4688 com toda a cadeia de execução visível: processo pai (`cmd.exe`) → processo filho (`powershell.exe`) → argumento (`Set-MpPreference -DisableRealtimeMonitoring $true`).
+The choice to invoke PowerShell from `cmd.exe` is intentional — it ensures the creation of a new child process, generating event 4688 with the full execution chain visible: parent process (`cmd.exe`) → child process (`powershell.exe`) → argument (`Set-MpPreference -DisableRealtimeMonitoring $true`).
 
 ---
 
-## Passo a Passo do Ataque
+## Attack Walkthrough
 
-### 1. Desabilitar o Windows Defender via cmd.exe
+### 1. Disable Windows Defender via cmd.exe
 
-No Windows 10, com `cmd.exe` aberto como Administrador:
+On Windows 10, with `cmd.exe` opened as Administrator:
 
 ```cmd
 powershell.exe -ExecutionPolicy Bypass -Command "Set-MpPreference -DisableRealtimeMonitoring $true"
 ```
 
-O comando retorna sem erro — o Defender está desativado.
+The command returns without error — Defender is disabled.
 
 ![Defender Disabled](images/01-defender-disabled.png)
 
 ---
 
-### 2. Detecção no Wazuh — Event ID 4688
+### 2. Detection in Wazuh — Event ID 4688
 
-No Wazuh Dashboard, o evento foi localizado com o filtro:
+In the Wazuh Dashboard, the event was located using the filter:
 
 ```
 data.win.eventdata.commandLine: *Set-MpPreference*
 ```
 
-O Wazuh retornou **1 hit** — o processo `powershell.exe` iniciado pelo `cmd.exe` no agente `DESKTOP-8LF9GEI`, rule ID `67027`, às `Mar 20, 2026 @ 19:56:57`.
+Wazuh returned **1 hit** — the `powershell.exe` process launched by `cmd.exe` on agent `DESKTOP-8LF9GEI`, rule ID `67027`, at `Mar 20, 2026 @ 19:56:57`.
 
 ![Wazuh 4688 Detection](images/02-wazuh-4688-defender.png)
 
 ---
 
-### 3. Análise dos campos do evento
+### 3. Event field analysis
 
-Com o evento expandido no Wazuh, os campos confirmam toda a cadeia de execução:
+With the event expanded in Wazuh, the fields confirm the full execution chain:
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
 | `eventID` | `4688` |
 | `newProcessName` | `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe` |
@@ -82,25 +82,25 @@ Com o evento expandido no Wazuh, os campos confirmam toda a cadeia de execução
 
 ---
 
-## Indicadores de Comprometimento (IOCs)
+## Indicators of Compromise (IOCs)
 
-| Indicador | Valor |
+| Indicator | Value |
 |---|---|
-| Processo | `powershell.exe` |
-| Processo pai | `cmd.exe` |
-| Comando | `Set-MpPreference -DisableRealtimeMonitoring $true` |
-| Flag suspeita | `-ExecutionPolicy Bypass` |
+| Process | `powershell.exe` |
+| Parent process | `cmd.exe` |
+| Command | `Set-MpPreference -DisableRealtimeMonitoring $true` |
+| Suspicious flag | `-ExecutionPolicy Bypass` |
 | Event ID | `4688` |
 
 ---
 
-## O que o SOC deve observar
+## What the SOC Should Look For
 
-- `powershell.exe` iniciado a partir de `cmd.exe` com `-ExecutionPolicy Bypass`
-- `commandLine` contendo `Set-MpPreference` combinado com `-Disable*`
-- Qualquer modificação nas preferências do Defender via linha de comando
-- Processos filhos do `cmd.exe` ou `powershell.exe` executando cmdlets de segurança
-- Sequência suspeita: desativação do Defender seguida de download ou execução de novo processo
+- `powershell.exe` launched from `cmd.exe` with `-ExecutionPolicy Bypass`
+- `commandLine` containing `Set-MpPreference` combined with `-Disable*`
+- Any modification to Defender preferences via command line
+- Child processes of `cmd.exe` or `powershell.exe` executing security cmdlets
+- Suspicious sequence: Defender disabled followed by download or new process execution
 
 ---
 
@@ -112,10 +112,10 @@ powershell.exe -ExecutionPolicy Bypass -Command "Set-MpPreference -DisableRealti
 
 ---
 
-## Estrutura de Arquivos
+## File Structure
 
 ```
-lab-08-t1562-disable-defender/
+lab-08-disable-defender-T1562/
 ├── README.md
 └── images/
     ├── 01-defender-disabled.png
@@ -125,7 +125,7 @@ lab-08-t1562-disable-defender/
 
 ---
 
-## Referências
+## References
 
 - [MITRE ATT&CK T1562.001 — Impair Defenses](https://attack.mitre.org/techniques/T1562/001/)
 - [Windows Event ID 4688 — Process Creation](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4688)

