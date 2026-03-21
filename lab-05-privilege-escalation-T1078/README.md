@@ -149,20 +149,19 @@ lab-05-privilege-escalation-T1078/
 - [Windows Event ID 4732 — Member Added to Security Group](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4732)
 - [Wazuh Documentation](https://documentation.wazuh.com)
 
-- --- 
+---
 
 ## Tools & Technologies
 
 ![Wazuh](https://img.shields.io/badge/Wazuh-v4.x-blue?style=flat-square&logo=wazuh&logoColor=white)
-![Windows Security](https://img.shields.io/badge/Windows_10-Event_4688-0078D6?style=flat-square&logo=windows&logoColor=white)
+![Windows Security](https://img.shields.io/badge/Windows_10-Event_4720_4732-0078D6?style=flat-square&logo=windows&logoColor=white)
 ![Kali Linux](https://img.shields.io/badge/Kali_Linux-Attacker-557C94?style=flat-square&logo=kalilinux&logoColor=white)
-![MITRE ATT&CK](https://img.shields.io/badge/MITRE-T1059.001-red?style=flat-square&logo=mitre&logoColor=white)
-![PowerShell](https://img.shields.io/badge/PowerShell-EncodedCmd-purple?style=flat-square&logo=powershell&logoColor=white)
+![MITRE ATT&CK](https://img.shields.io/badge/MITRE-T1078.003-red?style=flat-square&logo=mitre&logoColor=white)
 
 ---
 
 ## Connect
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=flat-square&logo=linkedin&logoColor=white&link=https://www.linkedin.com/in/moisesfpm/)](https://www.linkedin.com/in/moisesfpm/)
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/moisesdamata/)
 
 *Developed by Moises da Mata*
-

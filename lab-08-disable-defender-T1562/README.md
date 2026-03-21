@@ -130,3 +130,20 @@ lab-08-disable-defender-T1562/
 - [MITRE ATT&CK T1562.001 — Impair Defenses](https://attack.mitre.org/techniques/T1562/001/)
 - [Windows Event ID 4688 — Process Creation](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4688)
 - [Wazuh Documentation](https://documentation.wazuh.com)
+
+---
+
+## Tools & Technologies
+
+![Wazuh](https://img.shields.io/badge/Wazuh-v4.x-blue?style=flat-square&logo=wazuh&logoColor=white)
+![Windows Security](https://img.shields.io/badge/Windows_10-Event_4688-0078D6?style=flat-square&logo=windows&logoColor=white)
+![MITRE ATT&CK](https://img.shields.io/badge/MITRE-T1562.001-red?style=flat-square&logo=mitre&logoColor=white)
+![PowerShell](https://img.shields.io/badge/PowerShell-DefenseEvasion-purple?style=flat-square&logo=powershell&logoColor=white)
+
+---
+
+## Connect
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/moisesdamata/)
+
+*Developed by Moises da Mata*

@@ -152,12 +152,13 @@ lab-07-scheduled-task-T1053/
 ![Wazuh](https://img.shields.io/badge/Wazuh-v4.x-blue?style=flat-square&logo=wazuh&logoColor=white)
 ![Windows Security](https://img.shields.io/badge/Windows_10-Event_4688-0078D6?style=flat-square&logo=windows&logoColor=white)
 ![Kali Linux](https://img.shields.io/badge/Kali_Linux-Attacker-557C94?style=flat-square&logo=kalilinux&logoColor=white)
-![MITRE ATT&CK](https://img.shields.io/badge/MITRE-T1059.001-red?style=flat-square&logo=mitre&logoColor=white)
-![PowerShell](https://img.shields.io/badge/PowerShell-EncodedCmd-purple?style=flat-square&logo=powershell&logoColor=white)
+![MITRE ATT&CK](https://img.shields.io/badge/MITRE-T1053-red?style=flat-square&logo=mitre&logoColor=white)
+![PowerShell](https://img.shields.io/badge/PowerShell-ScheduledTask-purple?style=flat-square&logo=powershell&logoColor=white)
 
 ---
 
 ## Connect
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=flat-square&logo=linkedin&logoColor=white&link=https://www.linkedin.com/in/moisesfpm/)](https://www.linkedin.com/in/moisesfpm/)
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/moisesdamata/)
 
 *Developed by Moises da Mata*
